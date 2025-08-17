@@ -5,7 +5,7 @@ import axios from "axios";
 import { LRUCache } from "lru-cache";
 
 // --- Configuration ---
-const WEATHER_API_KEY = "1ac9e5944763bf8d7f93bd868869574a";
+const WEATHER_API_KEY = "";
 const cache = new LRUCache({ max: 500, ttl: 1000 * 60 * 15 }); // 15 minutes
 
 // --- Fetch Functions ---
@@ -122,6 +122,7 @@ server.registerResource("city-data", new ResourceTemplate("city-data://{city}?la
 const transport = new StdioServerTransport();
 await server.connect(transport);
 console.log(JSON.stringify({ event: "server_started", message: "Standalone MCP Server running on stdio" }));
+
 
 
 
