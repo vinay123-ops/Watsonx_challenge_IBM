@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: MCP-like City Data API
+  version: 1.0.0
+  description: Provides weather, sensor, and socioeconomic data for cities
+servers:
+  - url: https://d9651d260a6f.ngrok-free.app
+    description: Public ngrok tunnel
+paths:
+  /city/{city}:
+    get:
+      summary: Get weather, sensor, and socioeconomic data for a city
+      parameters:
+        - in: path
+          name: city
+          required: true
+          schema:
+            type: string
+          description: Name of the city
+        - in: query
+          name: lat
+          required: false
+          schema:
+            type: number
+          description: Latitude (optional for sensor data)
+        - in: query
+          name: lon
+          required: false
+          schema:
+            type: number
+          description: Longitude (optional for sensor data)
+      responses:
+        "200":
+          description: Combined city data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CityData'
+components:
+  schemas:
+    CityData:
+      type: object
+      properties:
+        city:
+          type: string
+        timestamp:
+          type: string
+        weather:
+          type: object
+          properties:
+            weatherTemperature:
+              type: number
+            weatherRainfall:
+              type: number
+            wind:
+              type: number
+            cached:
+              type: boolean
+        sensor:
+          type: object
+          properties:
+            sensorAirQuality:
+              type: number
+            sensorTemperature:
+              type: number
+            cached:
+              type: boolean
+        socioeconomic:
+          type: object
+          properties:
+            populationDensity:
+              type: number
+            malariaCases:
+              type: string
+            cached:
+              type: boolean

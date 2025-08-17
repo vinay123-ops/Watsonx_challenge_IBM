@@ -1,0 +1,205 @@
+openapi: 3.0.3
+info:
+  title: TomTom Backend API
+  version: 1.0.0
+  description: >
+    Node.js backend exposing TomTom APIs (Geocode, Reverse Geocode, Fuzzy Search, POI, Nearby Search, Routing, Traffic, and Static Map). 
+    Deployed at https://ibmbackend-production.up.railway.app
+servers:
+  - url: https://ibmbackend-production.up.railway.app
+paths:
+  /search/geocode/{query}:
+    get:
+      summary: Geocode a location
+      description: Get latitude and longitude for a given location name or address.
+      parameters:
+        - name: query
+          in: path
+          required: true
+          description: Location name or address
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Geocode results
+          content:
+            application/json:
+              example:
+                summary:
+                  query: "delhi"
+                  queryType: "NON_NEAR"
+                  queryTime: 71
+                  numResults: 10
+                  offset: 0
+                  totalResults: 435
+                  fuzzyLevel: 1
+                results:
+                  - type: "Geography"
+                    id: "YejTYGvuYCLIDZykXwqhUg"
+                    score: 2.6649
+                    entityType: "Municipality"
+                    address:
+                      municipality: "New Delhi"
+                      countrySubdivision: "Delhi"
+                      country: "India"
+                      freeformAddress: "New Delhi, Delhi"
+                    position:
+                      lat: 28.6324252
+                      lon: 77.218791
+        '400':
+          description: Invalid query
+
+  /search/reverse-geocode/{position}:
+    get:
+      summary: Reverse geocode coordinates
+      description: Get address information for a given lat,lon coordinate.
+      parameters:
+        - name: position
+          in: path
+          required: true
+          description: Coordinates in lat,lon format (e.g., 28.6139,77.2090)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Reverse geocode results
+          content:
+            application/json:
+              example:
+                addresses:
+                  - address:
+                      freeformAddress: "New Delhi, Delhi"
+                      country: "India"
+                    position:
+                      lat: 28.6324252
+                      lon: 77.218791
+        '400':
+          description: Invalid coordinates format
+
+  /search/nearby-search:
+    get:
+      summary: Search nearby locations
+      description: Find POIs near a specific coordinate.
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          description: Latitude
+          schema:
+            type: number
+        - name: lon
+          in: query
+          required: true
+          description: Longitude
+          schema:
+            type: number
+        - name: radius
+          in: query
+          required: false
+          description: Search radius in meters
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Nearby search results
+          content:
+            application/json:
+              example:
+                summary:
+                  queryTime: 30
+                  numResults: 5
+                results:
+                  - poi:
+                      name: "Connaught Place"
+                      category: "Shopping"
+                    position:
+                      lat: 28.632
+                      lon: 77.218
+        '400':
+          description: Missing lat or lon query parameters
+
+  /routing/calculate-route/{routePlanningLocations}:
+    get:
+      summary: Calculate route between multiple locations
+      description: Returns driving directions and route info.
+      parameters:
+        - name: routePlanningLocations
+          in: path
+          required: true
+          description: Locations in format lat1,lon1:lat2,lon2[:lat3,lon3...]
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Route calculation results
+          content:
+            application/json:
+              example:
+                routes:
+                  - summary: "28.6139,77.2090 to 28.7041,77.1025"
+                    travelTimeInSeconds: 3600
+                    lengthInMeters: 15000
+                    legs:
+                      - start: {lat: 28.6139, lon: 77.2090}
+                        end: {lat: 28.7041, lon: 77.1025}
+                        instructions:
+                          - text: "Head north"
+        '400':
+          description: Invalid route locations format
+
+  /traffic/incident-details:
+    get:
+      summary: Get traffic incident details
+      description: Returns traffic incidents for a given bounding box.
+      parameters:
+        - name: bbox
+          in: query
+          required: true
+          description: Bounding box (minLat,minLon,maxLat,maxLon)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Traffic incidents
+          content:
+            application/json:
+              example:
+                incidents:
+                  - id: "incident123"
+                    type: "ACCIDENT"
+                    position:
+                      lat: 28.632
+                      lon: 77.218
+                    severity: "HIGH"
+        '400':
+          description: bbox query parameter is required
+
+  /map/static-image:
+    get:
+      summary: Get static map image
+      description: Returns a static map image for a given area.
+      parameters:
+        - name: format
+          in: query
+          required: false
+          description: Image format (png or jpeg)
+          schema:
+            type: string
+            enum: [png, jpeg]
+            default: png
+      responses:
+        '200':
+          description: Static map image
+          content:
+            image/png: {}
+            image/jpeg: {}
+
+components:
+  schemas:
+    Position:
+      type: object
+      properties:
+        lat:
+          type: number
+        lon:
+          type: number
