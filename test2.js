@@ -7,7 +7,7 @@ import ngrok from 'ngrok';
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-const TOMTOM_API_KEY = 'XU7ywpBTzrvpxOPrwgzm7fthzPXL2REz';
+const TOMTOM_API_KEY = '';
 const TOMTOM_BASE = 'https://api.tomtom.com';
 
 app.use(express.json());
@@ -118,3 +118,4 @@ app.listen(PORT, async () => {
     console.error('Error starting ngrok:', err);
   }
 });
+
