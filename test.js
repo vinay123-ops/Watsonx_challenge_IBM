@@ -4,7 +4,7 @@ import axios from "axios";
 import ngrok from "ngrok";
 
 // ---------------------- Express Setup ----------------------
-const WEATHER_API_KEY = "1ac9e5944763bf8d7f93bd868869574a";
+const WEATHER_API_KEY = "";
 const cache = new LRUCache({ max: 500, ttl: 1000 * 60 * 15 });
 
 async function fetchWeather(city) {
@@ -105,3 +105,4 @@ app.listen(PORT, async () => {
     console.error("Error starting ngrok:", err);
   }
 });
+
